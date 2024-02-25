@@ -1,16 +1,19 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
+from langchain_openai import OpenAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-
-
+from langchain_community.document_loaders import WebBaseLoader
 
 load_dotenv()
 
 OPENAI_MODEL = "gpt-3.5-turbo"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 output_parser = StrOutputParser()
+loader = WebBaseLoader("https://docs.smith.langchain.com")
+docs = loader.load()
+embeddings = OpenAIEmbeddings()
 
 
 
