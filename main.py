@@ -1,10 +1,14 @@
 import os
 from dotenv import load_dotenv
 
+load_dotenv()  # Load API credentials from .env file
 
-load_dotenv()
-OCTOAI_TOKEN = os.getenv("OCTOAI_TOKEN")
-ENDPOINT_URL = "https://text.octoai.run/v1/chat/completions"
+octoai_api_token = os.getenv("OCTOAI_API_TOKEN")  # Retrieve token
+
+if not octoai_api_token:  # Check if token is retrieved successfully
+    raise ValueError("OCTOAI_API_TOKEN not found in .env file or environment variables.")
+
+ENDPOINT_URL = "https://text.octoai.run/v1/chat/completions"  # Set endpoint URL
 
 
 
@@ -17,6 +21,7 @@ prompt = PromptTemplate.from_template(template)
 
 llm = OctoAIEndpoint(
     endpoint_url=ENDPOINT_URL,
+    octoai_api_token=octoai_api_token,  # Pass token as a named parameter
     model_kwargs={
         "model": "gemma-7b-it",
         "max_tokens": 1024,
@@ -27,7 +32,7 @@ llm = OctoAIEndpoint(
             {
                 "role": "system",
                 "content": "You are a helpful assistant. Keep your responses limited to one short paragraph if possible.",
-            },
+            }
         ],
     },
 )
@@ -36,5 +41,4 @@ question = "Who was leonardo davinci?"
 
 llm_chain = LLMChain(prompt=prompt, llm=llm)
 
-print(llm_chain.invoke(question))
-print("hello")
+print(llm_chain.invoke(question)["text"])
