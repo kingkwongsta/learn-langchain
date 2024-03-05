@@ -18,7 +18,7 @@ ENDPOINT_URL = "https://text.octoai.run/v1/chat/completions"
 userLiquor = "vodka"
 userFlavor = "sweet"
 userMood = "celebratory"
-instructions = "create a unique creative advance cocktail based on the user preferences in the text delimited by triple periods"
+instructions = "create a unique creative advance cocktail based on the user preferences in the text delimited by triple periods. \n Only output a json file. \n"
 json_format = {
     "name": "Sour Nostalgia",
     "description":
@@ -37,9 +37,9 @@ json_format = {
       "Add all ingredients to a cocktail shaker without ice. Dry shake vigorously for 10-15 seconds. Add ice and shake again until well chilled",
   };
 
-userPreferences = f"{userLiquor} and emphasizes a {userFlavor} flavor profile for a {userMood} mood"
-negative = f"Do not include {userFlavor}, {userLiquor}, or {userMood} in the recipe name."
-template = instructions + negative + str(json_format) + f"...{userPreferences}..."
+userPreferences = f"contains {userLiquor} and emphasizes a {userFlavor} flavor profile for a {userMood} mood"
+negative = f"Do not include {userFlavor}, {userLiquor}, or {userMood} in the recipe name. \n"
+template = instructions + negative + f"...{userPreferences}..."
 prompt = PromptTemplate.from_template(template)
 
 llm = OctoAIEndpoint(
@@ -54,7 +54,7 @@ llm = OctoAIEndpoint(
         "messages": [
             {
                 "role": "system",
-                "content": "You are a helpful assistant. Keep your responses limited to one short paragraph if possible.",
+                "content": "You are an expert mixologist that outputs JSON",
             }
         ],
     },
@@ -62,7 +62,6 @@ llm = OctoAIEndpoint(
 
 # inputs = {"name": "Sour Nostalgia", "userLiquor": userLiquor, "userFlavor": userFlavor,"userMood": userMood}
 inputs = {
-    "name": "Sour Nostalgia",
     "userLiquor": userLiquor,
     "userFlavor": userFlavor,
     "userMood": userMood
@@ -70,4 +69,5 @@ inputs = {
 
 llm_chain = LLMChain(prompt=prompt, llm=llm)
 
-print(llm_chain.invoke(inputs))
+print(llm_chain.invoke(inputs)["text"])
+# print(template)
