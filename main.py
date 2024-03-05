@@ -16,7 +16,9 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms.octoai_endpoint import OctoAIEndpoint
 
-template = """Below is an instruction that describes a task. Write a response that appropriately completes the request.\n Instruction:\n{question}\n Response: """
+json_format = """{"name": "Sour Nostalgia", "description": "A unique cocktail with a nostalgic twist, featuring a sour flavor profile with a hint of nostalgia", "ingredients": [{"name": "Vodka", "quantity": "2 oz"}, {"name": "Lemon Juice", "quantity": "1 oz"}], "instructions": "Add all ingredients to a cocktail shaker without ice. Dry shake vigorously for 10-15 seconds. Add ice and shake again until well chilled"}"""
+template = """Complete the following steps: \n 1. Create a drink recipe contain {liquor} and is sweet \n 2. Output the response as json with the following fields:{json_format} """
+
 prompt = PromptTemplate.from_template(template)
 
 llm = OctoAIEndpoint(
@@ -37,8 +39,9 @@ llm = OctoAIEndpoint(
     },
 )
 
-question = "Who was leonardo davinci?"
+liquor = "Soju"
+inputs = {"liquor": liquor, "json_format": json_format}  
 
 llm_chain = LLMChain(prompt=prompt, llm=llm)
 
-print(llm_chain.invoke(question)["text"])
+print(llm_chain.invoke(inputs)["text"])
