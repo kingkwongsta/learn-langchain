@@ -1,7 +1,12 @@
 import os
+from dotenv import load_dotenv
 
-os.environ["OCTOAI_API_TOKEN"] = "YOUR_OCTOAI_API_TOKEN"
-os.environ["ENDPOINT_URL"] = "https://text.octoai.run/v1/chat/completions"
+
+load_dotenv()
+OCTOAI_TOKEN = os.getenv("OCTOAI_TOKEN")
+ENDPOINT_URL = "https://text.octoai.run/v1/chat/completions"
+
+
 
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
@@ -11,6 +16,7 @@ template = """Below is an instruction that describes a task. Write a response th
 prompt = PromptTemplate.from_template(template)
 
 llm = OctoAIEndpoint(
+    endpoint_url=ENDPOINT_URL,
     model_kwargs={
         "model": "gemma-7b-it",
         "max_tokens": 1024,
