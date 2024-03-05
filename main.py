@@ -12,10 +12,18 @@ if not octoai_api_token:  # Check if token is retrieved successfully
 
 ENDPOINT_URL = "https://text.octoai.run/v1/chat/completions"
 
-template = """Complete the following steps: \n 1. Create a drink recipe contain {liquor} and is sweet \n 2. Output the drink recipe as a json object with the following fields as an example:{json_format} """
-prompt = PromptTemplate.from_template(template)
-liquor = "Soju"
+userLiquor = "vodka"
+userFlavor = "sweet"
+userMood = "celebratory"
+instructions = "create a unique creative advance cocktail based on the user preferences in the text delimited by triple periods"
 json_format = """{"name": "Sour Nostalgia", "description": "A unique cocktail with a nostalgic twist, featuring a sour flavor profile with a hint of nostalgia", "ingredients": [{"name": "Vodka", "quantity": "2 oz"}, {"name": "Lemon Juice", "quantity": "1 oz"}], "instructions": "Add all ingredients to a cocktail shaker without ice. Dry shake vigorously for 10-15 seconds. Add ice and shake again until well chilled"}"""
+userPreferences = "contains {userLiquor} and emphasizes a {userFlavor} flavor profile for a {userMood} mood"
+negative = "Do not include ${userFlavor}, ${userLiquor}, or ${userMood} in the recipe name."
+template = instructions + negative + json_format + f"...{userPreferences}..."
+prompt = PromptTemplate.from_template(template)
+
+
+
 
 llm = OctoAIEndpoint(
     endpoint_url=ENDPOINT_URL,
@@ -35,9 +43,7 @@ llm = OctoAIEndpoint(
     },
 )
 
-
-inputs = {"liquor": liquor, "json_format": json_format}  
-
+inputs = {"userLiquor": userLiquor, "userFlavor": userFlavor,"userMood": userMood}  
 llm_chain = LLMChain(prompt=prompt, llm=llm)
 
 print(llm_chain.invoke(inputs)["text"])
