@@ -1,3 +1,5 @@
+# activate virtual env - go to .venvscripts
+# enter: .\Activate.ps1
 import os
 import json
 from dotenv import load_dotenv
