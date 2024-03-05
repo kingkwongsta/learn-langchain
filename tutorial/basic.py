@@ -16,5 +16,5 @@ prompt = PromptTemplate.from_template("Why is {color} such an important color")
 model = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model="gpt-3.5-turbo-0125")
 output_parser = StrOutputParser()
 
-chain = prompt | model | output_parser
+chain = prompt | model 
 print(chain.invoke({"color": "blue"}))
