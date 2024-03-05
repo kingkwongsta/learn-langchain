@@ -11,6 +11,7 @@ from langchain_openai import ChatOpenAI
 load_dotenv() 
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY") 
+model = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model="gpt-3.5-turbo-0125")
 
 class Recipe(BaseModel):
     name: str = Field(description="Name of the recipe")
@@ -19,13 +20,20 @@ class Recipe(BaseModel):
     # servings: Optional[int] = Field(description="Number of servings")
     # cook_time: Optional[str] = Field(description="Total cooking time")
 
+recipe_query = "Generate a recipe for {dish}"
+
+# Create a JSON output parser with the Recipe model.
 parser = JsonOutputParser(pydantic_object=Recipe)
+
+# Inject instructions into the prompt template.
 prompt = PromptTemplate(
-    template="Create a food recipe based on {cuisine} cuisine",
-    input_variables=["cuisine"],
+    template="Answer the user query.\n{format_instructions}\n{query}\n",
+    input_variables=["query"],
     partial_variables={"format_instructions": parser.get_format_instructions()},
 )
-model = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model="gpt-3.5-turbo-0125")
 
+# Build the chain and potentially invoke it with a specific dish.
 chain = prompt | model | parser
-print(chain.invoke({"cuisine": "japanese"}))
+
+# Example usage (replace "pasta" with any desired dish):
+print(chain.invoke({"query": recipe_query.format(dish="pasta")}))
