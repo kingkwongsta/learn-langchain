@@ -18,7 +18,7 @@ ENDPOINT_URL = "https://text.octoai.run/v1/chat/completions"
 userLiquor = "vodka"
 userFlavor = "sweet"
 userMood = "celebratory"
-instructions = "create a unique creative advance cocktail based on the user preferences in the text delimited by triple periods. \n Only output a json file. \n"
+instructions = "create a unique creative advance cocktail based on the user preferences in the text delimited by triple periods. \n Only output a JSON file. \n JSON should contain name, description, ingredients, and instructions. \n"
 json_format = {
     "name": "Sour Nostalgia",
     "description":
@@ -46,10 +46,10 @@ llm = OctoAIEndpoint(
     endpoint_url=ENDPOINT_URL,
     octoai_api_token=octoai_api_token, 
     model_kwargs={
-        "model": "gemma-7b-it",
+        "model": "smaug-72b-chat",
         "max_tokens": 1024,
         "presence_penalty": 0,
-        "temperature": 0.1,
+        "temperature": 0.6,
         "top_p": 0.9,
         "messages": [
             {
@@ -60,7 +60,6 @@ llm = OctoAIEndpoint(
     },
 )
 
-# inputs = {"name": "Sour Nostalgia", "userLiquor": userLiquor, "userFlavor": userFlavor,"userMood": userMood}
 inputs = {
     "userLiquor": userLiquor,
     "userFlavor": userFlavor,
@@ -70,4 +69,3 @@ inputs = {
 llm_chain = LLMChain(prompt=prompt, llm=llm)
 
 print(llm_chain.invoke(inputs)["text"])
-# print(template)
