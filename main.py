@@ -3,6 +3,10 @@
 import os
 import json
 from dotenv import load_dotenv
+from typing import List
+from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms.octoai_endpoint import OctoAIEndpoint
@@ -15,34 +19,24 @@ if not octoai_api_token:
 
 ENDPOINT_URL = "https://text.octoai.run/v1/chat/completions"
 
-userLiquor = "vodka"
-userFlavor = "sweet"
-userMood = "celebratory"
-instructions = "create a unique creative advance cocktail based on the user preferences in the text delimited by triple periods. \n Only output a JSON file. \n JSON should contain name, description, ingredients, and instructions. \n"
-json_format = {
-    "name": "Sour Nostalgia",
-    "description":
-      "A unique cocktail with a nostalgic twist, featuring a sour flavor profile with a hint of nostalgia",
-    "ingredients": [
-      {
-        "name": "Vodka",
-        "quantity": "2 oz",
-      },
-      {
-        "name": "Lemon Juice",
-        "quantity": "1 oz",
-      },
-    ],
-    "instructions":
-      "Add all ingredients to a cocktail shaker without ice. Dry shake vigorously for 10-15 seconds. Add ice and shake again until well chilled",
-  };
+class Recipe(BaseModel):
+    name: str = Field(description="Name of the drink")
+    description: str = Field(description="Description of the drink")
+    ingredients: List[str] = Field(description="List of ingredients")
+    instructions: List[str] = Field(description="List of mixing instructions")
 
-userPreferences = f"contains {userLiquor} and emphasizes a {userFlavor} flavor profile for a {userMood} mood"
-negative = f"Do not include {userFlavor}, {userLiquor}, or {userMood} in the recipe name. \n"
-template = instructions + negative + f"...{userPreferences}..."
-prompt = PromptTemplate.from_template(template)
+instructions = "create a unique creative advance cocktail based on the following user preferences of {userLiquor}, {userFlavor}, {userMood}. \n"
+negative = "Do not include {userFlavor}, {userLiquor}, or {userMood} in the recipe name. \n"
+parser = JsonOutputParser(pydantic_object=Recipe)
 
-llm = OctoAIEndpoint(
+template = instructions + negative
+prompt = PromptTemplate(
+    template="{template}.\n{format_instructions}\n{query}\n",
+    input_variables=["userLiquor", "userFlavor", "userMood"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
+)
+
+model = OctoAIEndpoint(
     endpoint_url=ENDPOINT_URL,
     octoai_api_token=octoai_api_token, 
     model_kwargs={
@@ -60,12 +54,6 @@ llm = OctoAIEndpoint(
     },
 )
 
-inputs = {
-    "userLiquor": userLiquor,
-    "userFlavor": userFlavor,
-    "userMood": userMood
-}
+chain = prompt | model | parser
 
-llm_chain = LLMChain(prompt=prompt, llm=llm)
-
-print(llm_chain.invoke(inputs)["text"])
+print(chain.invoke({"userLiquor": "Soju", "userFlavor": "Sweet", "userMood": "Celebratory"}))
