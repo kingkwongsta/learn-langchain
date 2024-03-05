@@ -23,14 +23,14 @@ class Recipe(BaseModel):
     ingredients: List[str] = Field(description="List of ingredients")
     instructions: List[str] = Field(description="List of mixing instructions")
 
-instructions = "create a unique creative advance cocktail based on the following user preferences of {userLiquor}, {userFlavor}, {userMood}. \n"
+instructions = "Create a unique creative advance cocktail recipe based on the following user preferences of {userLiquor}, {userFlavor}, {userMood}. \n"
 negative = "Do not include {userFlavor}, {userLiquor}, or {userMood} in the recipe name. \n"
 parser = JsonOutputParser(pydantic_object=Recipe)
 
-template = instructions + negative
+recipe_query = instructions + negative
 prompt = PromptTemplate(
-    template="Answer the following.\n{format_instructions}\n{query}\n",
-    input_variables=["query", "userLiquor", "userFlavor", "userMood"],
+    template="Answer the user query.\n{format_instructions}\n{query}\n",
+    input_variables=["query"],
     partial_variables={"format_instructions": parser.get_format_instructions()},
 )
 
@@ -54,4 +54,6 @@ model = OctoAIEndpoint(
 
 chain = prompt | model | parser
 
-print(chain.invoke({"query": template, "userLiquor": "Soju", "userFlavor": "Sweet", "userMood": "Celebratory"}))
+print(chain.invoke({
+    "query": recipe_query.format(userLiquor="{userLiquor}", userFlavor="{userFlavor}", userMood="{userMood}"),
+}))

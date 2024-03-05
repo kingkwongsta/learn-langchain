@@ -1,4 +1,3 @@
-
 import os
 from dotenv import load_dotenv
 from typing import List
@@ -22,18 +21,14 @@ class Recipe(BaseModel):
 
 recipe_query = "Generate a recipe for {dish}"
 
-# Create a JSON output parser with the Recipe model.
 parser = JsonOutputParser(pydantic_object=Recipe)
 
-# Inject instructions into the prompt template.
 prompt = PromptTemplate(
     template="Answer the user query.\n{format_instructions}\n{query}\n",
     input_variables=["query"],
     partial_variables={"format_instructions": parser.get_format_instructions()},
 )
 
-# Build the chain and potentially invoke it with a specific dish.
 chain = prompt | model | parser
 
-# Example usage (replace "pasta" with any desired dish):
 print(chain.invoke({"query": recipe_query.format(dish="pasta")}))
