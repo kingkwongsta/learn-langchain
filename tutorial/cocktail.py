@@ -1,11 +1,9 @@
 import os
-import json
 from dotenv import load_dotenv
 from typing import List
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.pydantic_v1 import BaseModel, Field
-from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms.octoai_endpoint import OctoAIEndpoint
 
@@ -15,27 +13,9 @@ octoai_api_token = os.getenv("OCTOAI_API_TOKEN")
 if not octoai_api_token: 
     raise ValueError("OCTOAI_API_TOKEN not found in .env file or environment variables.")
 
-ENDPOINT_URL = "https://text.octoai.run/v1/chat/completions"
-
-class Recipe(BaseModel):
-    name: str = Field(description="Name of the drink")
-    description: str = Field(description="Description of the drink")
-    ingredients: List[str] = Field(description="List of ingredients")
-    instructions: List[str] = Field(description="List of mixing instructions")
-
-instructions = "Create a unique creative advance cocktail recipe based on the following user preferences of {userLiquor}, {userFlavor}, {userMood}. \n"
-negative = "Do not include {userFlavor}, {userLiquor}, or {userMood} in the recipe name. \n"
-parser = JsonOutputParser(pydantic_object=Recipe)
-
-recipe_query = instructions + negative
-prompt = PromptTemplate(
-    template="Answer the user query.\n{format_instructions}\n{query}\n",
-    input_variables=["query"],
-    partial_variables={"format_instructions": parser.get_format_instructions()},
-)
-
+endpoint_url = "https://text.octoai.run/v1/chat/completions"
 model = OctoAIEndpoint(
-    endpoint_url=ENDPOINT_URL,
+    endpoint_url=endpoint_url,
     octoai_api_token=octoai_api_token, 
     model_kwargs={
         "model": "smaug-72b-chat",
@@ -52,8 +32,26 @@ model = OctoAIEndpoint(
     },
 )
 
+class Recipe(BaseModel):
+    name: str = Field(description="Name of the drink")
+    description: str = Field(description="Description of the drink")
+    ingredients: List[str] = Field(description="List of ingredients")
+    instructions: List[str] = Field(description="List of mixing instructions")
+
+instructions = "Create a unique creative advance cocktail recipe based on the following user preferences of {userLiquor}, {userFlavor}, {userMood}.  Do not include {userFlavor}, {userLiquor}, or {userMood} in the recipe name."
+# negative = "Do not include {userFlavor}, {userLiquor}, or {userMood} in the recipe name. \n"
+parser = JsonOutputParser(pydantic_object=Recipe)
+
+recipe_query = instructions
+
+prompt = PromptTemplate(
+    template="Answer the user query.\n{format_instructions}\n{query}\n",
+    input_variables=["query"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
+)
+
 chain = prompt | model | parser
 
 print(chain.invoke({
-    "query": recipe_query.format(userLiquor="{userLiquor}", userFlavor="{userFlavor}", userMood="{userMood}"),
+    "query": recipe_query.format(userLiquor="Soju", userFlavor="Sweet", userMood="Celebratory"),
 }))
