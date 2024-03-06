@@ -21,6 +21,10 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
+@app.get("/test")
+async def root():
+    return {"message": "TESTING TESTING TESTING"}
+
 from cocktail import generate_cocktail_recipe
 user_liquor = "Whiskey"
 user_flavor = "Spicy"
