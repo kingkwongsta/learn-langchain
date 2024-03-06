@@ -7,6 +7,7 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain.prompts import PromptTemplate
 from langchain_community.llms.octoai_endpoint import OctoAIEndpoint
 
+
 load_dotenv() 
 
 octoai_api_token = os.getenv("OCTOAI_API_TOKEN") 
@@ -50,7 +51,8 @@ prompt = PromptTemplate(
     partial_variables={"format_instructions": parser.get_format_instructions()},
 )
 
-chain = prompt | model | parser
+chain = prompt | model
+
 
 print(chain.invoke({
     "query": recipe_query.format(userLiquor="Soju", userFlavor="Sweet", userMood="Celebratory"),
