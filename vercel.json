@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "app",
+      "use": "@vercel/node",
+      "config": {
+        "buildCommand": "npm run build"
+      }
+    },
+    {
+      "src": "backend",
+      "use": "@vercel/python",
+      "config": {
+        "pythonVersion": "3.x",
+        "buildCommand": "pip install -r requirements.txt"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/.next/serverless/pages/api/*"
+    }
+  ]
+}
