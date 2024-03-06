@@ -5,8 +5,8 @@ export default function Home() {
   const [data, setData] = useState(null);
 
   const fetchData = async () => {
-    const userLiquor = "whiskey";
-    const userFlavor = "sweet";
+    const userLiquor = "vodka";
+    const userFlavor = "sour";
     const userMood = "celebratory";
     const queryString = new URLSearchParams({
       liquor: userLiquor,
@@ -37,6 +37,7 @@ export default function Home() {
       <div>
         <ul>
           <li>{data && data.name}</li>
+          <li>{data && data.description}</li>
         </ul>
       </div>
     </main>

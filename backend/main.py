@@ -2,7 +2,7 @@
 # .venv\Scripts\Activate.ps1
 # uvicorn main:app --reload
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -27,5 +27,5 @@ user_flavor = "Spicy"
 user_mood = "Relaxed"
 
 @app.get("/cocktail")
-async def test():
-    return generate_cocktail_recipe(user_liquor, user_flavor, user_mood)
+async def get_cocktail(liquor: str = Query(default=None), flavor: str = Query(default=None), mood: str = Query(default=None)):
+    return generate_cocktail_recipe(liquor, flavor, mood)

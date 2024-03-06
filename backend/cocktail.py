@@ -73,7 +73,7 @@ class Recipe(BaseModel):
         instructions: List[str] = Field(description="List of mixing instructions")
 
 
-def generate_cocktail_recipe(user_liquor: str, user_flavor: str, user_mood: str) -> Recipe:
+def generate_cocktail_recipe(liquor: str, flavor: str, mood: str) -> Recipe:
     """Generates a cocktail recipe based on user preferences using OctoAI."""
     load_dotenv()
 
@@ -98,7 +98,7 @@ def generate_cocktail_recipe(user_liquor: str, user_flavor: str, user_mood: str)
     )
 
     
-    instructions = f"Create a unique creative advance cocktail recipe based on the following user preferences of {user_liquor}, {user_flavor}, {user_mood}. Do not include {user_flavor}, {user_liquor}, or {user_mood} in the recipe name."
+    instructions = f"Create a unique creative advance cocktail recipe based on the following user preferences of {liquor}, {flavor}, {mood}. Do not include {flavor}, {liquor}, or {mood} in the recipe name."
     parser = JsonOutputParser(pydantic_object=Recipe)
 
     recipe_query = instructions
