@@ -109,7 +109,7 @@ def generate_cocktail_recipe(user_liquor: str, user_flavor: str, user_mood: str)
         partial_variables={"format_instructions": parser.get_format_instructions()},
     )
 
-    chain = prompt | model
+    chain = prompt | model | parser
 
     response = chain.invoke({"query": recipe_query})
     return response
