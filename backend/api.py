@@ -9,11 +9,12 @@ app = FastAPI()
 #     origins = [os.getenv("PRODUCTION_DOMAIN")]
 # else:
 #     origins = ["http://localhost:3000"]
-origins = ["langchain-frontend-one.vercel.app"]
+# origins = ["langchain-frontend-one.vercel.app"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    # allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
