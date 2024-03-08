@@ -13,7 +13,13 @@ export default function Home() {
       flavor: userFlavor,
       mood: userMood,
     });
-    const url = `/cocktail?${queryString}`;
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? `https://langchain-backend-alpha.vercel.app/cocktail?${queryString}` // Replace with your exact production URL
+        : `/cocktail?${queryString}`; // Replace with your development URL
+
+    const url = `${baseUrl}?${queryString}`;
+    // const url = `/cocktail?${queryString}`;
     // const url = `http://127.0.0.1:8000/cocktail?${queryString}`;
     const res = await fetch(url);
     const data = await res.json();
