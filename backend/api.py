@@ -5,10 +5,11 @@ import os
 
 app = FastAPI()
 
-if os.getenv("PRODUCTION_DOMAIN"):
-    origins = [os.getenv("PRODUCTION_DOMAIN")]
-else:
-    origins = ["http://localhost:3000"]
+# if os.getenv("PRODUCTION_DOMAIN"):
+#     origins = [os.getenv("PRODUCTION_DOMAIN")]
+# else:
+#     origins = ["http://localhost:3000"]
+origins = ["langchain-frontend-one.vercel.app"]
 
 app.add_middleware(
     CORSMiddleware,

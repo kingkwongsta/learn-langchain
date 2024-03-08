@@ -15,7 +15,7 @@ export default function Home() {
     });
     const baseUrl =
       process.env.NODE_ENV === "production"
-        ? `https://langchain-backend-alpha.vercel.app/cocktail?${queryString}`
+        ? `https://langchain-backend-kappa.vercel.app/cocktail?${queryString}`
         : `/cocktail?${queryString}`;
 
     const url = `${baseUrl}?${queryString}`;
