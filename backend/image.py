@@ -7,8 +7,6 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_community.llms.octoai_endpoint import OctoAIEndpoint
 from octoai.clients.image_gen import Engine, ImageGenerator
 
-
-
 def getImage():
     load_dotenv()
 
@@ -21,8 +19,6 @@ def getImage():
         endpoint_url=endpoint_url,
         octoai_api_token=octoai_api_token,
         model_kwargs={
-            "engine": "Engine.SDXL",
-            # "prompt": "a cat flying over the moon",
             "width": 1024,
             "height": 1024,
             "num_images": 1,
@@ -35,12 +31,16 @@ def getImage():
         }
     )
 
-    prompt = PromptTemplate(
-        template="Generate a detailed prompt to generate an image based on the following description: {image_desc}",
-        input_variables=["image_desc"],
+    prompt = "a cat flying over the moon"  # Your desired image prompt
+
+    # Create the PromptTemplate with empty input_variables (no dynamic inputs needed)
+    prompt_template = PromptTemplate(
+        template=prompt,
+        input_variables=[]
     )
 
-    chain = prompt | model
+    chain = prompt_template | model
 
-    response = chain.invoke({"image_desc": "cat flying over the moon"})
+    # Invoke without any input data
+    response = chain.invoke(input={})
     return response
