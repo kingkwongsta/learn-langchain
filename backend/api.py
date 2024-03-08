@@ -39,3 +39,8 @@ from cocktail import generate_cocktail_recipe
 @app.get("/cocktail")
 async def get_cocktail(liquor: str = Query(default=None), flavor: str = Query(default=None), mood: str = Query(default=None)):
     return generate_cocktail_recipe(liquor, flavor, mood)
+
+from image import getImage
+@app.get("/image")
+async def image_gen():
+    return getImage()
