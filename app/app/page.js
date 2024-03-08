@@ -13,7 +13,8 @@ export default function Home() {
       flavor: userFlavor,
       mood: userMood,
     });
-    const url = `http://127.0.0.1:8000/cocktail?${queryString}`;
+    const url = `/cocktail?${queryString}`;
+    // const url = `http://127.0.0.1:8000/cocktail?${queryString}`;
     const res = await fetch(url);
     const data = await res.json();
     setData(data);
