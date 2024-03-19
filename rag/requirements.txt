@@ -1,0 +1,5 @@
+python-dotenv
+langchain
+fastapi[all]
+octoai-sdk
+openai
