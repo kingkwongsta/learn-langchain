@@ -2,10 +2,8 @@
 # cd .venv
 # source bin/activate
 # uvicorn main:app --reload
-# pip install pdfminer.six
-# pip install pdf2image
-# pip install opencv-python
-# pip install unstructured_inference
+# pip install pypdf
+# pip install pinecone-client
 
 
 from langchain_community.document_loaders import UnstructuredPDFLoader, PyPDFLoader
@@ -24,3 +22,10 @@ data = loader.load()
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 texts = text_splitter.split_documents(data)
+
+print (f'Now you have {len(texts)} documents')
+
+from langchain.vectorstores import Chroma, Pinecone
+from langchain.embeddings.openai import OpenAIEmbeddings
+from pinecone import Pinecone, ServerlessSpec
+
