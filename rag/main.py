@@ -4,6 +4,8 @@
 # uvicorn main:app --reload
 # pip install pypdf
 # pip install pinecone-client
+# pip install -qU langchain-openai
+# pip install langchain-pinecone
 
 
 from langchain_community.document_loaders import UnstructuredPDFLoader, PyPDFLoader
@@ -23,50 +25,52 @@ data = loader.load()
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 texts = text_splitter.split_documents(data)
 
-# print (f'Now you have {len(texts)} documents')
 
-from langchain.vectorstores import Chroma, Pinecone
-from langchain.embeddings.openai import OpenAIEmbeddings
+
+# from langchain_community.vectorstores import Pinecone
+from langchain_openai import OpenAIEmbeddings
 from pinecone import Pinecone, ServerlessSpec
+from langchain_pinecone import PineconeVectorStore
+
+
+
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-
 PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
-# PINECONE_API_ENV = os.getenv('PINECONE_API_ENV', 'us-east1-gcp') # You may need to switch with your env
 
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
-pc.create_index(
-    name="quickstart",
-    dimension=8, # Replace with your model dimensions
-    metric="euclidean", # Replace with your model metric
-    spec=ServerlessSpec(
-        cloud="aws",
-        region="us-west-2"
-    ) 
+use_serverless = True
+
+index_name = 'learn'
+
+spec = ServerlessSpec(cloud='aws', region='us-west-2')
+
+    
+index = pc.Index(index_name)
+
+
+
+model_name = 'text-embedding-ada-002'
+
+embeddings = OpenAIEmbeddings(
+    model=model_name,
+    openai_api_key=OPENAI_API_KEY
 )
 
-index = pc.Index("quickstart")
-
-index.upsert(
-  vectors=[
-    {"id": "vec1", "values": [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]},
-    {"id": "vec2", "values": [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]},
-    {"id": "vec3", "values": [0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]},
-    {"id": "vec4", "values": [0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4]}
-  ],
-  namespace="ns1"
+text_field = "text"
+vectorstore = PineconeVectorStore(
+    index, embeddings, text_field
 )
 
-index.upsert(
-  vectors=[
-    {"id": "vec5", "values": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-    {"id": "vec6", "values": [0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6]},
-    {"id": "vec7", "values": [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7]},
-    {"id": "vec8", "values": [0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8]}
-  ],
-  namespace="ns2"
-)
+#----- add data to vector store
+# docsearch = PineconeVectorStore.from_documents(texts, embeddings, index_name=index_name)
 
-index.describe_index_stats()
+
+# print(index.describe_index_stats())
+query = "What is Machine Learning?"
+# print(vectorstore.similarity_search(
+#     query,  # our search query
+#     k=3  # return 3 most relevant docs
+# ))
+print(index.describe_index_stats())
