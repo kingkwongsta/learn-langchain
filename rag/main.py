@@ -73,4 +73,31 @@ query = "What is Machine Learning?"
 #     query,  # our search query
 #     k=3  # return 3 most relevant docs
 # ))
-print(index.describe_index_stats())
+# print(index.describe_index_stats())
+
+from langchain_openai import ChatOpenAI
+from langchain.chains import RetrievalQA
+from langchain.chains import RetrievalQAWithSourcesChain
+
+
+# completion llm
+llm = ChatOpenAI(
+    openai_api_key=OPENAI_API_KEY,
+    model_name='gpt-3.5-turbo',
+    temperature=0.0
+)
+
+qa = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vectorstore.as_retriever()
+)
+
+qa_with_sources = RetrievalQAWithSourcesChain.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vectorstore.as_retriever()
+)
+
+# print(qa.invoke(query))
+print(qa_with_sources.invoke(query))
