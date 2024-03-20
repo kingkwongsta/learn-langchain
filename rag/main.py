@@ -15,9 +15,12 @@ import os
 
 load_dotenv()
 
-loader = PyPDFLoader("mlbook.pdf")
+loader = PyPDFLoader("./mlbook2.pdf")
 data = loader.load()
 
-print (f'You have {len(data)} document(s) in your data')
-print (f'There are {len(data[0].page_content)} characters in your sample document')
-print (f'Here is a sample: {data[0].page_content[:200]}')
+# print (f'You have {len(data)} document(s) in your data')
+# print (f'There are {len(data[0].page_content)} characters in your sample document')
+# print (f'Here is a sample: {data[2].page_content[:200]}')
+
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+texts = text_splitter.split_documents(data)
