@@ -68,7 +68,7 @@ vectorstore = PineconeVectorStore(
 
 
 # print(index.describe_index_stats())
-query = "What is Machine Learning?"
+query = "What is stochastic gradient descent?"
 # print(vectorstore.similarity_search(
 #     query,  # our search query
 #     k=3  # return 3 most relevant docs
