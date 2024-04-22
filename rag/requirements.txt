@@ -3,3 +3,7 @@ langchain
 fastapi[all]
 octoai-sdk
 openai
+langchain-pinecone
+langchain-openai
+pinecone-client
+pypdf
