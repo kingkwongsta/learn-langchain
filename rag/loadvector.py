@@ -38,7 +38,7 @@ pc = Pinecone(api_key=PINECONE_API_KEY)
 
 use_serverless = True
 
-index_name = input("Enter the desired index name: ")
+index_name = input("Which index do you want to load the data to? ")
 
 spec = ServerlessSpec(cloud='aws', region='us-west-2')
 
@@ -60,7 +60,7 @@ vectorstore = PineconeVectorStore(
 )
 
 #----- add data to vector store
-# docsearch = PineconeVectorStore.from_documents(texts, embeddings, index_name=index_name)
+docsearch = PineconeVectorStore.from_documents(texts, embeddings, index_name=index_name)
 
-
+print(f"***** Successfully added data to Vector Store in index: {index_name} *****")
 print(index.describe_index_stats())
