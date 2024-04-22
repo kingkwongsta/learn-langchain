@@ -6,7 +6,7 @@ def chunk_pdf(pdf, chunk_size, chunk_overlap):
     loader = PyPDFLoader(pdf)
     data = loader.load()
 
-
+    #chunk_size=500 | chunk_overlap=50
     text_splitter = RecursiveCharacterTextSplitter(chunk_size, chunk_overlap)
     texts = text_splitter.split_documents(data)
     
